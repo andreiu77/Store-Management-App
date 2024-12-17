@@ -1,0 +1,8 @@
+XS Black 199.99 1 coat5
+S Beige 199.99 3 coat6
+L Brown 149.99 2 coat2
+L Brown 149.99 2 coat2
+XL Brown 199.99 1 coat3
+XL Brown 199.99 4 coat3
+XXL Navy 79.99 4 coat55
+L Beige 199.99 1 coat7

@@ -1,0 +1,5 @@
+XS Brown 249.99 2 coat4
+XS Black 199.99 5 coat5
+M Brown 299.99 2 coat8
+M Brown 149.99 1 coat2
+L Grey 199.99 0 coat1
