@@ -3,6 +3,8 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QListWidget>
+#include <Encryption/Encryption.h>
+
 class Ui : public QWidget {
 private:
 	Controller controller;
@@ -11,8 +13,11 @@ private:
 	QDialog* adminModeWidget;
 	QListWidget* adminModeList;
 	QWidget* userModeWidget;
+	std::string adminPassword = "admin";
 
 private slots:
+	void adminLogin();
+	void registerNewAdmin();
 	void handleAdminMode();
 	void repopulate_list();
 	void handleUserMode();

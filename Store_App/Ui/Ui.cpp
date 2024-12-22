@@ -25,12 +25,83 @@ Ui::Ui(std::string repoType, QWidget* parent) : controller(Controller(repoType))
     QPushButton* userModeButton = new QPushButton("User Mode", this);
     adminModeButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     userModeButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(adminModeButton, &QPushButton::clicked, this, &Ui::handleAdminMode);
+    connect(adminModeButton, &QPushButton::clicked, this, &Ui::adminLogin);
     connect(userModeButton, &QPushButton::clicked, this, &Ui::handleUserMode);
     layout->addWidget(adminModeButton);
     layout->addWidget(userModeButton);
 
     setLayout(layout);
+}
+
+void Ui::adminLogin()
+{
+    QDialog* loginWidget = new QDialog();
+    loginWidget->setWindowTitle("Administrator Login");
+    loginWidget->resize(400, 100);
+    QVBoxLayout* layout = new QVBoxLayout(loginWidget);
+    QLabel* idLabel = new QLabel("Enter id: ", loginWidget);
+    QLabel* passwordLabel = new QLabel("Enter password: ", loginWidget);
+    QLineEdit* idEdit = new QLineEdit(loginWidget);
+    QLineEdit* passwordEdit = new QLineEdit(loginWidget);
+    passwordEdit->setEchoMode(QLineEdit::Password);  //for password input hiding
+    layout->addWidget(idLabel);
+    layout->addWidget(idEdit);
+    layout->addWidget(passwordLabel);
+    layout->addWidget(passwordEdit);
+    QPushButton* loginButton = new QPushButton("Login", loginWidget);
+    QPushButton* newAdminButton = new QPushButton("Register", loginWidget);
+    connect(newAdminButton, &QPushButton::clicked, this, &Ui::registerNewAdmin);
+    layout->addWidget(newAdminButton);
+    layout->addWidget(loginButton);
+    connect(loginButton, &QPushButton::clicked, [this, idEdit, passwordEdit, loginWidget]() {
+		std::string id = idEdit->text().toStdString();
+		std::string password = passwordEdit->text().toStdString();
+        if (checkCredentials(id, password)) {
+			loginWidget->close();
+			handleAdminMode();
+		}
+		else {
+			QMessageBox::critical(loginWidget, "Error", "Incorrect credentials");
+        }
+        });
+    loginWidget->setLayout(layout);
+    loginWidget->exec();
+}
+
+void Ui::registerNewAdmin()
+{
+	QDialog* registerWidget = new QDialog();
+	registerWidget->setWindowTitle("Register new admin");
+	registerWidget->resize(400, 100);
+	QVBoxLayout* layout = new QVBoxLayout(registerWidget);
+	QLabel* idLabel = new QLabel("Enter id: ", registerWidget);
+	QLabel* passwordLabel = new QLabel("Enter password: ", registerWidget);
+	QLineEdit* idEdit = new QLineEdit(registerWidget);
+	QLineEdit* passwordEdit = new QLineEdit(registerWidget);
+	passwordEdit->setEchoMode(QLineEdit::Password);  //for password input hiding
+	layout->addWidget(idLabel);
+	layout->addWidget(idEdit);
+	layout->addWidget(passwordLabel);
+	layout->addWidget(passwordEdit);
+	QPushButton* registerButton = new QPushButton("Register", registerWidget);
+	layout->addWidget(registerButton);
+	connect(registerButton, &QPushButton::clicked, [idEdit, passwordEdit, registerWidget, this]() {
+		std::string id = idEdit->text().toStdString();
+		std::string password = passwordEdit->text().toStdString();
+		if (id == "" || password == "") {
+			QMessageBox::critical(registerWidget, "Error", "Empty fields");
+			return;
+		}
+		if (!checkUniqueId(id)) {
+			QMessageBox::critical(registerWidget, "Error", "Id already exists");
+			return;
+		}
+		addCredentials(id, password);
+		QMessageBox::information(registerWidget, "Success", "Admin registered successfully");
+		registerWidget->close();
+		});
+	registerWidget->setLayout(layout);
+	registerWidget->exec();
 }
 
 void Ui::handleAdminMode() {
